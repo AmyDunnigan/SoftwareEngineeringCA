@@ -6,7 +6,7 @@ int main() {
     const int screenHeight = 800;
 
     // Initialize the Window
-    InitWindow(screenWidth, screenHeight, "My Third Test Commit");
+    InitWindow(screenWidth, screenHeight, "My Test Commit");
 
     // Setting the Frames Per Second
     SetTargetFPS(60);
@@ -17,7 +17,7 @@ int main() {
         // Setup Canvas
         BeginDrawing();
         // Clear canvas to a specific color to avoid flicker
-        ClearBackground(RAYWHITE);
+        ClearBackground(RED);
 
         // Here goes all the Game Logic
 
