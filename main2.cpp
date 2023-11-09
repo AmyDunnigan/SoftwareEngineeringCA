@@ -6,7 +6,7 @@ int main() {
     const int screenHeight = 800;
 
     // Initialize the Window
-    InitWindow(screenWidth, screenHeight, "My Test Commit");
+    InitWindow(screenWidth, screenHeight, "My Second Test Commit");
 
     // Setting the Frames Per Second
     SetTargetFPS(60);
