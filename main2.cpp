@@ -1,12 +1,16 @@
 #include "raylib.h"
-
+#include "Ball.h"
+    
 int main() {
-    // Determin the Game Window Width and Height
+    // Determine the Game Window Width and Height
     const int screenWidth = 800;
     const int screenHeight = 800;
 
     // Initialize the Window
     InitWindow(screenWidth, screenHeight, "Input Movement Example");
+
+    // Intialise ball
+    Ball myBall({screenWidth/2, screenHeight/2}, 50, BLUE);
 
     // Draw background    
     Texture2D deskTexture = LoadTexture("Resources/Textures/desk.png");
@@ -62,6 +66,17 @@ int main() {
         DrawRectangle(screenWidth/3 - 40, boxPositionY, 80, 80, MAROON);
         DrawText("Use mouse wheel to move the cube up and down!", 10, 10, 20, GRAY);
         DrawTextureEx(penTexture, position, rotation, 0.5f, tint);
+
+        // Draw ball
+        
+            myBall.Draw();
+
+            if(IsKeyDown(KEY_RIGHT)) myBall.Move({5,0});
+            if(IsKeyDown(KEY_LEFT)) myBall.Move({-5,0});
+            if(IsKeyDown(KEY_UP)) myBall.Move({0,-5});
+            if(IsKeyDown(KEY_DOWN)) myBall.Move({0,5});
+
+            EndDrawing();
 
         // Here goes all the Game Logic
 
