@@ -2,7 +2,7 @@
 
 #include "raylib.h"
 
-#define MAX_SNOW    16
+#define MAX_SNOW    32
 #define SNOW_SPEED  2
 
 typedef struct Snow
@@ -88,7 +88,7 @@ int main()
     const int gravity{250};
     const int scarfyPadding{50};
 
-    Texture2D obstacle = LoadTexture("Resources/Textures/baddy.png");
+    Texture2D obstacle = LoadTexture("Resources/Textures/smpenguin.png");
     Texture2D scarfy = LoadTexture("Resources/Textures/scarfy.png");
     
     Anim scarfyAnim; // Set character features
