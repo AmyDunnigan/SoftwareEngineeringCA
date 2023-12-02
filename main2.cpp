@@ -2,6 +2,19 @@
 
 #include "raylib.h"
 
+#define MAX_SNOW    16
+#define SNOW_SPEED  2
+
+typedef struct Snow
+{
+    public:
+    float radius;
+    Color color;
+    Vector2 speed;
+    Vector2 position;
+    bool active;    
+}Snow;
+
 struct Anim
 {
     Rectangle rec;
@@ -15,8 +28,55 @@ int main()
 {
     const int screenWidth = 1200;
     const int screenHeight = 800;
-    
+
+    int posx, posy;
+    int velx, vely;
+    bool correctRange = false;
+    static Snow BigSnow[MAX_SNOW] = { 0 };
+
     InitWindow(screenWidth, screenHeight, "First Game");
+
+    for (int i = 0; i < MAX_SNOW; i++)
+    {
+        posx = GetRandomValue(0, screenWidth);
+
+        while (!correctRange)
+        {
+            if (posx > screenWidth/2 - 150 && posx < screenWidth/2 + 150) posx = GetRandomValue(0, screenWidth);
+            else correctRange = true;
+        }
+
+        correctRange = false;
+
+        posy = GetRandomValue(0, screenHeight);
+
+        while (!correctRange)
+        {
+            if (posy > screenHeight/2 - 150 && posy < screenHeight/2 + 150)  posy = GetRandomValue(0, screenHeight);
+            else correctRange = true;
+        }
+
+        BigSnow[i].position = (Vector2){posx, posy}; 
+
+        correctRange = false;
+        velx = GetRandomValue(-SNOW_SPEED, SNOW_SPEED);
+        vely = GetRandomValue(-SNOW_SPEED, SNOW_SPEED);
+
+        while (!correctRange)
+        {
+            if (velx == 0 && vely == 0)
+            {
+                velx = GetRandomValue(-SNOW_SPEED, SNOW_SPEED);
+                vely = GetRandomValue(-SNOW_SPEED, SNOW_SPEED);
+            }
+            else correctRange = true;
+        }
+
+        BigSnow[i].speed = (Vector2){velx, vely};
+        BigSnow[i].radius = 40;
+        BigSnow[i].active = true;
+        BigSnow[i].color = BLUE;
+    }
 
     InitAudioDevice();
 
@@ -158,11 +218,35 @@ int main()
     }
 
         BeginDrawing();
-        ClearBackground(RAYWHITE);
-        if(IsKeyPressed(KEY_SPACE))
+        ClearBackground(LIGHTGRAY);
+
+    if(IsKeyPressed(KEY_SPACE))
+    {
+        PlaySound(sound);
+    }
+
+ // Meteors logic: big meteors
+    for (int i = 0; i < MAX_SNOW; i++)
+    {
+    if (BigSnow[i].active)
         {
-            PlaySound(sound);
+        // Movement
+        BigSnow[i].position.x += BigSnow[i].speed.x;
+        BigSnow[i].position.y += BigSnow[i].speed.y;
+
+        // Collision logic: meteor vs wall
+        if  (BigSnow[i].position.x > screenWidth + BigSnow[i].radius) BigSnow[i].position.x = -(BigSnow[i].radius);
+        else if (BigSnow[i].position.x < 0 - BigSnow[i].radius) BigSnow[i].position.x = screenWidth + BigSnow[i].radius;
+        if (BigSnow[i].position.y > screenHeight + BigSnow[i].radius) BigSnow[i].position.y = -(BigSnow[i].radius);
+        else if (BigSnow[i].position.y < 0 - BigSnow[i].radius) BigSnow[i].position.y = screenHeight + BigSnow[i].radius;
         }
+    }    
+    // Draw meteors
+    for (int i = 0; i < MAX_SNOW; i++)
+            {
+                if (BigSnow[i].active) DrawCircleV(BigSnow[i].position, BigSnow[i].radius, WHITE);
+                else DrawCircleV(BigSnow[i].position, BigSnow[i].radius, Fade(WHITE, 0.3f));
+            }
 
         EndDrawing();        
                 
