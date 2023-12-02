@@ -15,6 +15,16 @@ typedef struct Snow
     bool active;    
 }Snow;
 
+typedef struct Penguin
+{
+    public:
+    float radius;
+    Color color;
+    Vector2 speed;
+    Vector2 position;
+    bool active;    
+}Penguin;
+
 struct Anim
 {
     Rectangle rec;
@@ -33,8 +43,14 @@ int main()
     int velx, vely;
     bool correctRange = false;
     static Snow BigSnow[MAX_SNOW] = { 0 };
-
+    
     InitWindow(screenWidth, screenHeight, "First Game");
+
+    Font customFont = LoadFont("Resource/Fonts/font.ttf");
+    const char *text = "PRESS THE SPACE BAR TO";
+    Vector2 textPosition = {10,screenHeight/3 -20};
+    int textSize = 20;
+    Color textColor = RAYWHITE;
 
     for (int i = 0; i < MAX_SNOW; i++)
     {
@@ -81,6 +97,7 @@ int main()
     InitAudioDevice();
 
     Sound sound = LoadSound("Resources/Sounds/sound.wav");
+    Sound questionsound = LoadSound("Resources/Sounds/questionsound.wav");
 
     int volume = 50;
     SetSoundVolume(sound, volume/100.f);
@@ -211,6 +228,7 @@ int main()
         scarfyAnim.pos.y += velocity * deltaTime;
         obPos.x += obVel * deltaTime;
 
+
     if (!collision)
     {
         DrawTextureRec(scarfy, scarfyAnim.rec, scarfyAnim.pos, WHITE);
@@ -225,7 +243,17 @@ int main()
         PlaySound(sound);
     }
 
- // Meteors logic: big meteors
+        if(IsKeyPressed(KEY_RIGHT))
+    {
+        PlaySound(questionsound);
+    }
+
+        if(IsKeyPressed(KEY_LEFT))
+    {
+        PlaySound(questionsound);
+    }
+
+ // Snow logic adapted from Raylib asteroid game
     for (int i = 0; i < MAX_SNOW; i++)
     {
     if (BigSnow[i].active)
@@ -234,19 +262,24 @@ int main()
         BigSnow[i].position.x += BigSnow[i].speed.x;
         BigSnow[i].position.y += BigSnow[i].speed.y;
 
-        // Collision logic: meteor vs wall
+        // Collision logic: snow vs wall
         if  (BigSnow[i].position.x > screenWidth + BigSnow[i].radius) BigSnow[i].position.x = -(BigSnow[i].radius);
         else if (BigSnow[i].position.x < 0 - BigSnow[i].radius) BigSnow[i].position.x = screenWidth + BigSnow[i].radius;
         if (BigSnow[i].position.y > screenHeight + BigSnow[i].radius) BigSnow[i].position.y = -(BigSnow[i].radius);
         else if (BigSnow[i].position.y < 0 - BigSnow[i].radius) BigSnow[i].position.y = screenHeight + BigSnow[i].radius;
         }
     }    
-    // Draw meteors
+    // Draw snow adapted from asteroid game
     for (int i = 0; i < MAX_SNOW; i++)
             {
                 if (BigSnow[i].active) DrawCircleV(BigSnow[i].position, BigSnow[i].radius, WHITE);
                 else DrawCircleV(BigSnow[i].position, BigSnow[i].radius, Fade(WHITE, 0.3f));
             }
+        if (!collision)
+    {
+        DrawText(text, textPosition.x, textPosition.y, textSize, textColor);
+        DrawText("JUMP OVER THE PENGUIN!", 10, screenHeight/2, 80, RAYWHITE);
+    }
 
         EndDrawing();        
                 
@@ -255,6 +288,8 @@ int main()
     UnloadTexture(scarfy);    
     UnloadTexture(obstacle);
     UnloadSound(sound);
+    UnloadSound(questionsound);
+    UnloadFont(customFont);
     CloseAudioDevice();
     CloseWindow();       
     return 0;       
