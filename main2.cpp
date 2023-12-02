@@ -1,3 +1,5 @@
+// Game starting point taken from class example
+
 #include "raylib.h"
 
 struct Anim
@@ -11,18 +13,25 @@ struct Anim
 
 int main()
 {
-    const int screenWidth = 800;
-    const int screenHeight = 600;
+    const int screenWidth = 1200;
+    const int screenHeight = 800;
     
     InitWindow(screenWidth, screenHeight, "First Game");
 
-    const int gravity{1000};
+    InitAudioDevice();
+
+    Sound sound = LoadSound("Resources/Sounds/sound.wav");
+
+    int volume = 50;
+    SetSoundVolume(sound, volume/100.f);
+
+    const int gravity{250};
     const int scarfyPadding{50};
 
     Texture2D obstacle = LoadTexture("Resources/Textures/baddy.png");
     Texture2D scarfy = LoadTexture("Resources/Textures/scarfy.png");
     
-    Anim scarfyAnim;
+    Anim scarfyAnim; // Set character features
     scarfyAnim.rec.width = scarfy.width/6;
     scarfyAnim.rec.height = scarfy.height;
     scarfyAnim.rec.x = 0;
@@ -33,7 +42,7 @@ int main()
     scarfyAnim.updateTime = 1.0/12.0;
     scarfyAnim.runningTime = 0.0;
 
-    Rectangle obRec;
+    Rectangle obRec; // Set obstacle features
     obRec.width = obstacle.width;
     obRec.height = obstacle.height;
     obRec.x = 300;
@@ -91,65 +100,78 @@ int main()
 
     }
 
-    if(IsKeyReleased(KEY_RIGHT) && !jumped){
+    if(IsKeyReleased(KEY_RIGHT) && !jumped)
+    {
         scarfyAnim.frame = 0;
         scarfyAnim.rec.x = scarfyAnim.frame * scarfyAnim.rec.width;
        
     }
 
-        if(IsKeyDown(KEY_LEFT) && !jumped){
+    if(IsKeyDown(KEY_LEFT) && !jumped)
+    {
         scarfyAnim.pos.x -= speed* deltaTime;
         scarfyAnim.rec.width = -scarfy.width/6;
 
         scarfyAnim.runningTime += deltaTime;
-        if(scarfyAnim.runningTime>= scarfyAnim.updateTime){
+        if(scarfyAnim.runningTime>= scarfyAnim.updateTime)
+        {
             scarfyAnim.runningTime = 0.0;
             scarfyAnim.rec.x = scarfyAnim.frame * scarfyAnim.rec.width;
             scarfyAnim.frame ++;
-            if (scarfyAnim.frame>5){
+            if (scarfyAnim.frame>5)
+            {
                 scarfyAnim.frame = 0;
             }
         }
     }
 
-    if(IsKeyReleased(KEY_LEFT) && !jumped){
+    if(IsKeyReleased(KEY_LEFT) && !jumped)
+    {
         scarfyAnim.frame = 0;
         scarfyAnim.rec.x = scarfyAnim.frame * scarfyAnim.rec.width;       
     }
 
     if(scarfyAnim.pos.y >= screenHeight - scarfy.height)
-        {
-            velocity = 0;
-            jumped = false;
-        }
+    {
+        velocity = 0;
+        jumped = false;
+    }
+
     else
-        {
-            velocity += gravity * deltaTime;
-            jumped = true;
-        }
+    {
+        velocity += gravity * deltaTime;
+        jumped = true;
+    }
 
     if (IsKeyPressed(KEY_SPACE) && !jumped)
-        {
-            velocity -= jumpHeight; 
-        }
+    {
+        velocity -= jumpHeight; 
+    }
 
         scarfyAnim.pos.y += velocity * deltaTime;
-
         obPos.x += obVel * deltaTime;
 
     if (!collision)
+    {
+        DrawTextureRec(scarfy, scarfyAnim.rec, scarfyAnim.pos, WHITE);
+        DrawTextureRec(obstacle, obRec, obPos, WHITE);
+    }
+
+        BeginDrawing();
+        ClearBackground(RAYWHITE);
+        if(IsKeyPressed(KEY_SPACE))
         {
-            DrawTextureRec(scarfy, scarfyAnim.rec, scarfyAnim.pos, WHITE);
-            DrawTextureRec(obstacle, obRec, obPos, WHITE);
+            PlaySound(sound);
         }
 
-            BeginDrawing();
-            ClearBackground(RAYWHITE);
-            EndDrawing();        
+        EndDrawing();        
                 
     }
+
     UnloadTexture(scarfy);    
     UnloadTexture(obstacle);
+    UnloadSound(sound);
+    CloseAudioDevice();
     CloseWindow();       
     return 0;       
             
