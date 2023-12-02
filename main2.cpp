@@ -2,7 +2,7 @@
 
 #include "raylib.h"
 
-#define MAX_SNOW    32
+#define MAX_SNOW    64
 #define SNOW_SPEED  2
 
 typedef struct Snow
@@ -89,7 +89,7 @@ int main()
         }
 
         BigSnow[i].speed = (Vector2){velx, vely};
-        BigSnow[i].radius = 40;
+        BigSnow[i].radius = 30;
         BigSnow[i].active = true;
         BigSnow[i].color = BLUE;
     }
@@ -243,12 +243,12 @@ int main()
         PlaySound(sound);
     }
 
-        if(IsKeyPressed(KEY_RIGHT))
+    if(IsKeyPressed(KEY_RIGHT))
     {
         PlaySound(questionsound);
     }
 
-        if(IsKeyPressed(KEY_LEFT))
+    if(IsKeyPressed(KEY_LEFT))
     {
         PlaySound(questionsound);
     }
@@ -278,7 +278,7 @@ int main()
         if (!collision)
     {
         DrawText(text, textPosition.x, textPosition.y, textSize, textColor);
-        DrawText("JUMP OVER THE PENGUIN!", 10, screenHeight/2, 80, RAYWHITE);
+        DrawText("JUMP OVER THE PENGUIN!", 10, screenHeight/2.4, 80, RAYWHITE);
     }
 
         EndDrawing();        
