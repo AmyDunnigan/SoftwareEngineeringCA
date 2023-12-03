@@ -2,28 +2,21 @@
 
 #include "raylib.h"
 
-#define MAX_SNOW    64
+#define MAX_SNOW    360
 #define SNOW_SPEED  2
 
-typedef struct Snow
+// Outlining snow features adapted from Raylib asteroid game 
+// https://github.com/raysan5/raylib-games/blob/master/classics/src/asteroids.c
+// attempted to move this to a header file, but decided it was unnecessary as the code is not complex
+
+typedef struct Snow                                    
 {
-    public:
     float radius;
     Color color;
     Vector2 speed;
     Vector2 position;
     bool active;    
 }Snow;
-
-typedef struct Penguin
-{
-    public:
-    float radius;
-    Color color;
-    Vector2 speed;
-    Vector2 position;
-    bool active;    
-}Penguin;
 
 struct Anim
 {
@@ -34,6 +27,7 @@ struct Anim
     float runningTime;
 };
 
+// Setting screen size and loading snow and text parameters
 int main()
 {
     const int screenWidth = 1200;
@@ -51,7 +45,8 @@ int main()
     Vector2 textPosition = {10,screenHeight/3 -20};
     int textSize = 20;
     Color textColor = RAYWHITE;
-
+    
+// array for snow adapted from raylib asteriod game
     for (int i = 0; i < MAX_SNOW; i++)
     {
         posx = GetRandomValue(0, screenWidth);
@@ -72,12 +67,17 @@ int main()
             else correctRange = true;
         }
 
+// BigSnow is possibly not the best name as there is only one size of snow
+// This was carried over from the asteroid game and was useful in differtiating between 
+// various, structs, classes, arrays etc
+
         BigSnow[i].position = (Vector2){posx, posy}; 
 
         correctRange = false;
         velx = GetRandomValue(-SNOW_SPEED, SNOW_SPEED);
         vely = GetRandomValue(-SNOW_SPEED, SNOW_SPEED);
 
+// Initialising snow adapted from raylib asteroid game
         while (!correctRange)
         {
             if (velx == 0 && vely == 0)
@@ -89,12 +89,13 @@ int main()
         }
 
         BigSnow[i].speed = (Vector2){velx, vely};
-        BigSnow[i].radius = 30;
+        BigSnow[i].radius = 10;
         BigSnow[i].active = true;
-        BigSnow[i].color = BLUE;
+        BigSnow[i].color = WHITE;
     }
 
-    InitAudioDevice();
+// Loading sounds and textures
+    InitAudioDevice();    
 
     Sound sound = LoadSound("Resources/Sounds/sound.wav");
     Sound questionsound = LoadSound("Resources/Sounds/questionsound.wav");
@@ -102,7 +103,7 @@ int main()
     int volume = 50;
     SetSoundVolume(sound, volume/100.f);
 
-    const int gravity{250};
+    const int gravity{350};
     const int scarfyPadding{50};
 
     Texture2D obstacle = LoadTexture("Resources/Textures/smpenguin.png");
@@ -138,7 +139,8 @@ int main()
     
     SetTargetFPS(60);
     
-    // Main game loop
+// Main game loop
+    
     while (!WindowShouldClose())    // Detect window close button or ESC key
     { const float deltaTime{GetFrameTime()};
 
@@ -156,11 +158,13 @@ int main()
         scarfyAnim.rec.width
     };
 
+// Check collision
     if(CheckCollisionRecs(scarfyRec,obstacleRec))
     {
         collision = true;     
     }
 
+// Scarfy movement from class example
     if(IsKeyDown(KEY_RIGHT) && !jumped){
         scarfyAnim.pos.x += speed* deltaTime;
         scarfyAnim.rec.width = scarfy.width/6;
@@ -251,23 +255,24 @@ int main()
         PlaySound(questionsound);
     }
 
- // Snow logic adapted from Raylib asteroid game
+// Snow logic adapted from Raylib asteroid game
     for (int i = 0; i < MAX_SNOW; i++)
     {
     if (BigSnow[i].active)
         {
-        // Movement
+// Snow movement
         BigSnow[i].position.x += BigSnow[i].speed.x;
         BigSnow[i].position.y += BigSnow[i].speed.y;
 
-        // Collision logic: snow vs wall
+// Collision logic: snow vs wall
         if  (BigSnow[i].position.x > screenWidth + BigSnow[i].radius) BigSnow[i].position.x = -(BigSnow[i].radius);
         else if (BigSnow[i].position.x < 0 - BigSnow[i].radius) BigSnow[i].position.x = screenWidth + BigSnow[i].radius;
         if (BigSnow[i].position.y > screenHeight + BigSnow[i].radius) BigSnow[i].position.y = -(BigSnow[i].radius);
         else if (BigSnow[i].position.y < 0 - BigSnow[i].radius) BigSnow[i].position.y = screenHeight + BigSnow[i].radius;
         }
     }    
-    // Draw snow adapted from asteroid game
+// Draw snow adapted from asteroid game
+    
     for (int i = 0; i < MAX_SNOW; i++)
             {
                 if (BigSnow[i].active) DrawCircleV(BigSnow[i].position, BigSnow[i].radius, WHITE);
@@ -283,6 +288,7 @@ int main()
                 
     }
 
+// Unload textures sounds and fonts
     UnloadTexture(scarfy);    
     UnloadTexture(obstacle);
     UnloadSound(sound);
