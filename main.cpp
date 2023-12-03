@@ -228,13 +228,11 @@ int main()
         scarfyAnim.pos.y += velocity * deltaTime;
         obPos.x += obVel * deltaTime;
 
-
     if (!collision)
     {
         DrawTextureRec(scarfy, scarfyAnim.rec, scarfyAnim.pos, WHITE);
         DrawTextureRec(obstacle, obRec, obPos, WHITE);
     }
-
         BeginDrawing();
         ClearBackground(LIGHTGRAY);
 
